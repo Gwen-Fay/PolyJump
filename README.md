@@ -26,3 +26,9 @@ Geometry will cast shadows, even on the Voxel Models.
 This quad has a reflect shader, giving the illusion of water.  
 <br />
 <br />
+![Editor](https://imgur.com/yHgNXMX.gif)  
+This ugly mess is the voxel editor. I think I am running it in a different resolution than it was designed for, It wasn't this ugly when I worked on this 5 years ago. I made this GUI extremely quickly (and badly) because I wanted to quickly create a voxel model to test out the lighting features. My plan was, to go back and redo this. 
+
+I guess I should explain how the Voxels actually work. Each model is an oct-tree, containing the position, color, and normal of each voxel. A voxel has a pre-programed normal, and thus the whole voxel is colored one color regardless of light. The model editor could create Voxels, and assign them a color and a normal. Normals could then be tweaked to have different effects. I had plans to support randomizing the normals by some amount to create a bump-map like effect. 
+
+When I first made this, I was so excited by what kinds of crazy shapes could be made with this simple editor. Now honestly I am embarased by how bad the UI is.
