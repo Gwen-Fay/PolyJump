@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="jar/AppleJavaExtensions.jar"/>
+	<classpathentry kind="lib" path="jar/asm-debug-all.jar"/>
+	<classpathentry kind="lib" path="jar/jinput.jar"/>
+	<classpathentry kind="lib" path="jar/laf-plugin-7.2.1.jar"/>
+	<classpathentry kind="lib" path="jar/laf-widget-7.2.1.jar"/>
+	<classpathentry kind="lib" path="jar/log4j-api-2.0-beta9.jar"/>
+	<classpathentry kind="lib" path="jar/lwjgl_test.jar"/>
+	<classpathentry kind="lib" path="jar/lwjgl_util_applet.jar"/>
+	<classpathentry kind="lib" path="jar/lwjgl_util.jar"/>
+	<classpathentry kind="lib" path="jar/lwjgl-debug.jar"/>
+	<classpathentry kind="lib" path="jar/lwjgl.jar"/>
+	<classpathentry kind="lib" path="jar/lzma.jar"/>
+	<classpathentry kind="lib" path="jar/slick-util.jar"/>
+	<classpathentry kind="lib" path="jar/substance-7.2.1.jar"/>
+	<classpathentry kind="lib" path="jar/trident-7.2.1.jar"/>
+	<classpathentry kind="lib" path="out/artifacts/polyJump_jar/polyJump.jar"/>
+	<classpathentry kind="output" path="out/production/polyJump"/>
+</classpath>

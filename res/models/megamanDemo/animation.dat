@@ -1,0 +1,7 @@
+# res/models/megamanDemo/animation.dat
+#Frame Count: 2
+Frames:
+Standing,Blinking
+Animations:
+#AnimationName, end param, frame1, time 1, frame2, time2,...
+Standing,Standing,2.0,Blinking,0.1

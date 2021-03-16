@@ -1,0 +1,6 @@
+# res/models/test/animation.dat
+#Frame Count: 4
+Frames:
+a,s,d,f
+Animations:
+#AnimationName, end param, frame1, time 1, frame2, time2,...

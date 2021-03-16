@@ -1,0 +1,96 @@
+Notes on GJK:
+
+Object: Shape
+
+Public Support Vector3 (Vector3f direction, Shape shapeA, Shape shapeB)
+
+    finds max point in shapeA down direction, (by dot product)
+    and suptracts it from min point in ShapeB down direction.
+
+alg:
+    create list
+    add to list a minkouski differnce point (support of some dirrection)
+    set direction to oposite of point
+
+    Loop
+    {
+        A = support(D)
+        if(A dot D < 0)
+        {
+           //no intersection
+        }
+        list += A
+        if(DoSimplex(list,D)){
+            // intersection
+        }
+    }
+
+
+    boolean DoSimplex(List, Direction){
+
+         //2 points A = list[1], B =list[0], meaning A was recently added
+         if list.size == 2
+         {
+            if(AB dot AO >0)
+            {
+                // orition  "inbetween" ab
+                //keep a,b in list
+                D = ab X a0 X ab
+                return false;
+            }else{
+                //Origion "Twards" a
+                list.remove(b)
+                D =  new vector3f(-a)
+                return false
+            }
+         }
+
+         //a = list[3], b = list[2] c = list[1]
+         else if(list.size == 3)
+         {
+            abc =ab X ac
+            if(abc X ac){
+                 if(ac dot A0 > 0)
+                 {
+                    list = [a,c]
+                    d = ac X a0 x ac
+                    return false;
+                 }
+                 else
+                 {
+                    *
+                 }
+            }
+            else if(ab X abc)
+            {
+                *
+            }
+            else if(abc){
+                list = [abc]
+                 D = abc
+                 return false;
+            }else{
+                list = [acb]
+                D = -abc
+                return false
+            }
+         }
+
+         elseif list.size = 4
+         {
+         //find with face you are closes to, and then do
+         //triangle step above. if inside triangle, return true
+         }
+
+    }
+
+             *
+             if(ab){
+                list = [ab]
+                D = ab X a0 X ab
+                return false
+             }else{
+                list = [a]
+                D = a0
+                return false
+             }

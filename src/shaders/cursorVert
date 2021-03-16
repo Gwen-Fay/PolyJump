@@ -1,0 +1,20 @@
+#version 400 core
+
+out vec4 pass_color;
+
+uniform vec3 pos;
+uniform vec4 color;
+uniform mat4 view;
+uniform mat4 proj;
+
+
+void main(void){
+
+	vec4 worldPos = vec4(pos.xyz, 1.0);
+	vec4 finalPos = proj * view * worldPos;
+	gl_Position = finalPos;
+	gl_PointSize = (30)/finalPos.z;
+	
+	pass_color = color;
+
+}

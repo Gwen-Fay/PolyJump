@@ -1,0 +1,66 @@
+#version 140
+
+out vec4 out_Colour;
+
+in vec4 clipSpace;
+in vec2 texCoords;
+in vec3 toCamera;
+in vec3 toLight;
+
+uniform sampler2D reflection;
+uniform sampler2D refraction;
+uniform sampler2D dudv;
+uniform sampler2D depth;
+uniform float move;
+uniform vec3 lightColor;
+
+const float waveStrength = 0.03;
+const float shineDamper = 20;
+const float reflectivity = 1;
+
+uniform float near;
+uniform float far;
+
+void main(void){
+
+	vec2 ndc = (clipSpace.xy/clipSpace.w)/2.0 + 0.5;
+
+	float depth = texture(depth,ndc).r;
+	float floorDistance = 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
+	
+	depth = gl_FragCoord.z;
+	float waterDistance = 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
+	float waterDepth = floorDistance - waterDistance;
+	
+	vec2 distTex = texture(dudv, vec2(texCoords.x + move, texCoords.y)).rg*0.1;
+	distTex = texCoords + vec2(distTex.x, distTex.y+move);
+	vec2 totalDistortion = (texture(dudv,distTex).rg *2.0 -1.0) * clamp(waterDepth/0.5,0.0,1.0);
+	
+	vec2 reflectCoords = vec2(ndc.x,-ndc.y)+(totalDistortion* waveStrength);
+	vec2 refractCoords =vec2(ndc.x,ndc.y)+(totalDistortion* waveStrength);
+	
+	reflectCoords.x = clamp(reflectCoords.x,0.001,0.999);
+	reflectCoords.y = clamp(reflectCoords.y,-0.999,-0.001);
+	refractCoords = clamp(refractCoords,0.001,0.999);
+	
+	vec4 reflectCol = texture(reflection,reflectCoords);
+	vec4 refractCol = texture(refraction,refractCoords);
+	
+	vec3 normal = vec3(totalDistortion.x,2.0,totalDistortion.y);
+	normal = normalize(normal);
+	
+	float refractiveFactor = dot(normalize(toCamera),normal);
+	refractiveFactor = pow(refractiveFactor,2);
+
+	float specFactor = max(dot(reflect(-toLight,normal),toCamera),0.0);
+	float dampedFactor = pow(specFactor,shineDamper);
+	vec3 finalSpecular = dampedFactor * reflectivity * lightColor  * clamp(waterDepth/0.5,0.0,1.0);
+	
+	out_Colour = mix(reflectCol,refractCol,refractiveFactor);
+	out_Colour = mix(out_Colour, vec4(0.0,0.2,0.2,1),clamp(waterDepth/15.0,0.0,1.0)) + vec4(finalSpecular,0.0);
+	
+	out_Colour.a = clamp(waterDepth/0.25,0.0,1.0);
+	
+	//out_Colour = vec4(waterDepth/50.0);
+
+}

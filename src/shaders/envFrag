@@ -1,0 +1,104 @@
+#version 400 core
+
+in vec2 pass_tex;
+
+in vec3 toLight[8];
+in vec3 toCamera;
+
+in vec3 surfNormal;
+
+in vec4 shadowCoords;
+
+in mat3 skew;
+
+out vec4 out_color;
+
+uniform sampler2D textureSamp;
+
+uniform vec3 lightColor[8];
+uniform vec3 attenuation[8];
+
+uniform sampler2D normalMap;
+
+uniform sampler2D shadowMap;
+uniform float mapSize;
+const int pcfCount = 1;
+const float totalTexels = (pcfCount * 2.0 +1.0) * (pcfCount * 2.0 +1.0);
+
+const float shineDamper = 10.0;
+const float reflectivity = 1.0;
+
+void main(void){
+
+	//shadows
+
+	float texelSize = 1.0/mapSize;
+	float total = 0.0;
+	
+	for(int x =-pcfCount; x<=pcfCount;x++ ){
+		for(int y =-pcfCount; y<=pcfCount;y++ ){
+			float nearestLight = texture(shadowMap,shadowCoords.xy + (vec2(x,y)*texelSize)).r;
+			if(shadowCoords.z > nearestLight+0.005){
+				total +=1.0;
+			}
+		}
+	}
+	total /= totalTexels;
+	
+	float lightFactor = 1.0- (total * shadowCoords.w);
+	
+	//normal mapping
+		
+	float s = length(vec3(surfNormal.z,0,-surfNormal.x)+0.00001);
+	float c = surfNormal.y;
+		
+	float scale = 1-c;
+	scale = scale/s;
+	scale = scale/s;
+		
+	mat3 rot;
+	rot[0] = vec3(1,0,0);
+	rot[1] = vec3(0,1,0);
+	rot[2] = vec3(0,0,1);
+		
+	rot =  rot + skew + ((skew * skew) * scale);
+		
+	vec3 unitNorm = (normalize(texture(normalMap, pass_tex).rgb) * 2.0 - 1.0);	
+	unitNorm = normalize(vec3(unitNorm.r,unitNorm.b,unitNorm.g));
+	unitNorm = unitNorm*rot;
+	unitNorm = normalize(unitNorm);
+	
+	//light
+	vec3 toCameraNorm = normalize(toCamera);
+	
+	vec3 totalDiffuse = vec3(0.0);
+	vec3 totalSpecular = vec3(0.0);
+
+	for(int i=0;i<8;i++){
+		float distance = length(toLight[i]);
+		float attFactor = attenuation[i].x + (attenuation[i].y * distance) + (attenuation[i].z * distance * distance);
+		vec3 toLightNorm = normalize(toLight[i]);	
+		float nDotl = dot(unitNorm,toLightNorm);
+		float brightness = max(nDotl,0.0);
+		
+		vec3 lightDirection = -toLightNorm;
+		vec3 reflectedLightDirection = reflect(lightDirection,unitNorm);
+		float specularFactor = dot(reflectedLightDirection , toCameraNorm);
+		specularFactor = max(specularFactor,0.0);
+		float dampedFactor = pow(specularFactor,shineDamper);
+		
+		totalDiffuse = totalDiffuse + (brightness * lightColor[i])/attFactor;
+		totalSpecular = totalSpecular + (dampedFactor * reflectivity * lightColor[i])/attFactor;
+	}
+	totalDiffuse = max((totalDiffuse *lightFactor) , 0.0);
+	
+	totalSpecular = totalSpecular *  lightFactor;
+	
+	vec4 color = texture(textureSamp,pass_tex);
+	if(color.a<0.5){
+		discard;
+	}
+
+	out_color =  vec4(totalDiffuse,1.0) * color + vec4(totalSpecular,1.0);	
+	//out_color = vec4(passTan,1.0);
+}

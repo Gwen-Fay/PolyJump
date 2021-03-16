@@ -1,0 +1,50 @@
+#version 400 core
+
+in vec3 pos;
+in vec4 color;
+in vec3 norm;
+in vec2 glow;
+in vec3 cube;
+
+out vec4 pass_color;
+
+uniform mat4 view;
+uniform mat4 proj;
+
+uniform vec3 lightPos;
+uniform vec3 lightColor;
+
+const float shineDamper = 10.0;
+const float reflectivity = 1.0;
+
+void main(void){
+
+	vec4 worldPos = vec4((pos), 1.0);
+	vec4 finalPos = proj * view * worldPos;
+	gl_Position = proj * view * vec4((pos+cube), 1.0);;
+	
+	
+	vec3 surfNormal = normalize((vec4(norm,0.0)).xyz);
+	vec3 toCamera = normalize((inverse(view) * vec4(0.0,0.0,0.0,1.0)).xyz -worldPos.xyz);
+	
+	vec3 toLight = normalize(lightPos - worldPos.xyz);
+	
+	vec4 finalDiffuse;
+	
+	if((norm.x == 0.0) && (norm.y == 0.0) && (norm.z == 0.0)){
+		finalDiffuse =  vec4(max(dot(toCamera,toLight),0.0) * lightColor, 1.0);
+	}else{
+		finalDiffuse =  vec4((dot(surfNormal,toLight)) * lightColor, 1.0);
+	}
+		
+	float specFactor = max(dot(reflect(-toLight,surfNormal),toCamera),0.0);
+	float dampedFactor = pow(specFactor,shineDamper);
+	vec3 finalSpecular = dampedFactor * reflectivity * lightColor;
+	
+	finalSpecular *= glow.x;
+	finalDiffuse = max(finalDiffuse,glow.y);
+	
+	
+	
+	pass_color = finalDiffuse * color + vec4(finalSpecular,1.0);
+}

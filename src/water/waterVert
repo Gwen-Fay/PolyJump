@@ -1,0 +1,25 @@
+#version 140
+
+in vec2 pos;
+
+out vec4 clipSpace;
+out vec2 texCoords;
+out vec3 toCamera;
+out vec3 toLight;
+
+uniform mat4 trans;
+uniform mat4 proj;
+uniform mat4 view;
+uniform vec3 cameraPos;
+uniform vec3 lightPos;
+
+void main(void){
+
+	vec4 worldPosition = trans * vec4(pos, 0.0, 1.0);
+	clipSpace = proj * view * worldPosition;
+	gl_Position = clipSpace;
+	texCoords = vec2((pos.x+1.0)/2.0, 1-(pos.y+1.0)/2.0);
+	toCamera = normalize(cameraPos - worldPosition.xyz);
+	toLight = normalize(lightPos - worldPosition.xyz);
+
+}

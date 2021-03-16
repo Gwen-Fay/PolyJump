@@ -1,0 +1,33 @@
+#version 400 core
+
+in vec2 pass_tex;
+
+out vec4 out_color;
+
+uniform vec3 color;
+uniform sampler2D fontAtlas;
+
+const float width = 0.5;
+uniform float edge;
+
+const float boarderWidth = 0.6;
+uniform float boarderEdge;
+
+uniform vec3 borderColor = vec3(1,0,0);
+
+uniform vec2 offset = vec2(0.00,0.00);
+
+void main(void){
+	
+	float distance = 1.0 - texture(fontAtlas, pass_tex).a;
+	float alpha = 1.0 - smoothstep(width,width+edge,distance);
+	
+	float boarderD = 1.0 - texture(fontAtlas, pass_tex+offset).a;
+	float borderA = 1.0 - smoothstep(boarderWidth,boarderWidth+boarderEdge,boarderD);
+	
+	float combinedAlpha = alpha + (1.0-alpha) * borderA;
+	
+	
+	out_color = vec4(mix(borderColor,color,alpha/combinedAlpha),combinedAlpha);
+
+}

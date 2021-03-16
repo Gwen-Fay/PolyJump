@@ -1,0 +1,6 @@
+# res/models/wallChicken/animation.dat
+#Frame Length
+
+#Frame, index
+null,0
+#AnimationName, end param, frame1, time 1, frame2, time2,...

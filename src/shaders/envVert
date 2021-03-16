@@ -1,0 +1,72 @@
+#version 400 core
+
+in vec3 pos;
+in vec2 tex;
+in vec3 norm;
+in vec3 tan;
+
+out vec2 pass_tex;
+
+out vec3 toLight[8];
+out vec3 toCamera;
+
+out vec3 surfNormal;
+out mat3 skew;
+
+out vec4 shadowCoords;
+
+uniform vec3 scale;
+uniform mat4 trans;
+uniform mat4 view;
+uniform mat4 proj;
+uniform bool isTile;
+
+uniform vec3 lightPos[8];
+
+uniform mat4 toShadow;
+uniform float shadowDist;
+
+uniform vec4 plane;
+
+void main(void){
+
+	vec4 worldPos = trans * vec4(pos.xyz, 1.0);
+	vec4 finalPos = proj * view * worldPos;
+	gl_Position = finalPos;
+	
+	gl_ClipDistance[0] = dot(worldPos,plane);
+	
+	//for tiling
+	if(abs(norm.x) > abs(max(norm.y,norm.z))){
+		pass_tex = tex * vec2(scale.z,scale.y); 
+	}else if(abs(norm.z) > abs(max(norm.y,norm.x))){
+		pass_tex = tex * vec2(scale.x,scale.y);
+	}else if(abs(norm.y) > abs(max(norm.x,norm.z))){
+		pass_tex = tex * vec2(scale.x,scale.z);
+	}else{
+		pass_tex = tex * scale.x;
+	}
+
+	//normal maping
+	surfNormal = (trans * vec4(norm,0.0)).xyz;
+	
+	skew[0] = vec3(0,surfNormal.x,0);
+	skew[1] = vec3(-surfNormal.x,0,-surfNormal.z);
+	skew[2] = vec3(0,surfNormal.z,0);
+	
+	// light
+	for(int i=0;i<8;i++){
+		toLight[i] = lightPos[i] - worldPos.xyz;
+	}
+	toCamera = (inverse(view) * vec4(0.0,0.0,0.0,1.0)).xyz -worldPos.xyz;
+	
+	//shadows
+	float transitionDist = shadowDist/20.0;
+	
+	shadowCoords = toShadow * worldPos; 
+	
+	float distance = length((view * worldPos).xyz);
+	distance = distance - (shadowDist - transitionDist);
+	distance = distance/transitionDist;
+	shadowCoords.w = clamp(1.0-distance,0.0,1.0);
+}

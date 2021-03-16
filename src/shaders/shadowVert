@@ -1,0 +1,16 @@
+#version 150
+
+in vec3 in_position;
+in vec2 tex;
+in vec3 cube;
+
+out vec2 passTex;
+
+uniform mat4 mvpMatrix;
+
+void main(void){
+
+	gl_Position =  mvpMatrix * vec4((in_position + cube), 1.0);
+	passTex = tex;
+    gl_PointSize = 2;
+}

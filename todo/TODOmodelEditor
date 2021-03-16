@@ -1,0 +1,69 @@
+Todo:
+    rethink moving cursors around
+    copy-paste
+    rotate selected
+    add Confirm menu options for destructive operations
+        (delete frames)
+     error handle negative time in frameAnima
+
+    DONE - duplicate frame
+
+    DONE - axis at blue cursor
+
+bug fix:
+
+    DONE - opening other tabs stops brush/revolve/animation
+    DONE - Revolve normals fix
+    DONE - odd sized box brush
+    DONE - duplicate frame
+    DONE - remove old revolve "display"
+    DONE - move button consistency
+    DONE - revolve tool crashing when switching tabs
+
+    Brush Tab:
+        DONE - make red cursor always visible
+        DONE - rename "box" to "sphere" and "square" to "box"
+        DONE - view brush toggle
+        DONE - color variance and chance effect brush
+        DONE - Delete key needs to delete selected
+    Filter Tab:
+        DONE - Deselect
+        DONE - change Normals
+        DONE - change specular
+        DONE - revolve
+        DONE - change color
+
+    DONE - Save-Load Files
+
+    DONE - view color choosers
+
+    Animation tab:
+
+        DONE - frame functionality
+        DONE - animaiton functionality
+        DONE - makeAnimation functionality
+        DONE - error handeling animation input
+        DONE - play animaiton
+
+Notes:
+
+Revole Tool X axis:
+
+horizontal vert<cursorZ - fine
+horizontal vert>cursorZ - Z is inverted
+Vertical vert<cursorY - y,z fliped
+Vertical vert>cursorY - y,z fliped
+
+.dat File System:
+
+#FrameSize: n
+
+Frames:
+frame1,frame2,...
+
+Animations,n
+name1,nextAnimation,frame1ID,time1,frame2ID,time2,...
+name2,nextAnimation,frame1ID,time1,frame2ID,time2,...
+...
+
+
